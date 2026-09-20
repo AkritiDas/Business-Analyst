@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Analytics Web App - CSV Upload & Processing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header class="navbar">
+        <a href="/" class="brand">
+            <div class="brand-logo">BA</div>
+            <div>
+                <div class="brand-title">Business Analytics Web App</div>
+            </div>
+            <span class="brand-tag">Portfolio Edition</span>
+        </a>
+
+        <ul class="nav-menu">
+            <li><a href="/" class="nav-link active">Upload Data</a></li>
+            {% if has_active_data %}
+            <li><a href="/dashboard" class="nav-link">Active Dashboard</a></li>
+            <li><a href="/dashboard" class="nav-btn">View Workspace →</a></li>
+            {% else %}
+            <li><a href="/demo" class="nav-btn">Try Demo Data</a></li>
+            {% endif %}
+        </ul>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        
+        <div class="hero-section">
+            <h1 class="hero-title">Turn Raw Sales Data Into <span>Actionable Business Intelligence</span></h1>
+            <p class="hero-subtitle">
+                Upload your raw sales CSV dataset to automatically validate schema, run SQLite & Pandas analytics, calculate business KPIs, and generate automated executive insights.
+            </p>
+        </div>
+
+        <!-- Upload Card -->
+        <div class="upload-card">
+            
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-icon">📊</div>
+                    <div class="drop-text" id="dropText">Drag and drop your raw sales CSV file here</div>
+                    <div class="drop-subtext">or click to browse from your device (.csv files accepted)</div>
+                    <input type="file" id="fileInput" name="file" accept=".csv" class="file-input">
+                </div>
+
+                <div class="upload-actions">
+                    <button type="submit" class="nav-btn" id="btnUpload" style="padding: 12px 28px; font-size: 15px;">
+                        <span>Upload & Analyze Data</span>
+                    </button>
+                    <a href="/demo" class="btn-secondary" style="padding: 12px 22px;">
+                        ⚡ Load Demo Dataset
+                    </a>
+                </div>
+            </form>
+
+            <!-- Progress Bar -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Validating CSV schema and ingesting into SQLite...</div>
+            </div>
+
+            <!-- Error Notification Alert -->
+            <div class="error-alert" id="errorAlert"></div>
+
+            {% if has_active_data %}
+            <div class="sample-notice">
+                <div>
+                    <strong>Active Dataset Loaded:</strong> <code>{{ active_filename }}</code> is ready for analysis.
+                </div>
+                <a href="/dashboard" style="color: var(--primary); font-weight: 600; text-decoration: none;">Go to Dashboard →</a>
+            </div>
+            {% endif %}
+
+            <div style="margin-top: 24px; font-size: 12.5px; color: var(--text-muted); text-align: center;">
+                Supports standard sales columns: <code>Order_ID</code>, <code>Order_Date</code>, <code>Customer_ID</code>, <code>Product</code>, <code>Category</code>, <code>Region</code>, <code>Quantity</code>, <code>Sales</code>, <code>Profit</code>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Business Analytics Web Application &copy; 2024 | Built for Business Analyst Portfolio & Executive Intelligence
+    </footer>
+
+    <!-- Interactive JS Script for File Upload handling -->
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const dropText = document.getElementById('dropText');
+        const uploadForm = document.getElementById('uploadForm');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const progressText = document.getElementById('progressText');
+        const errorAlert = document.getElementById('errorAlert');
+        const btnUpload = document.getElementById('btnUpload');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                dropText.textContent = `Selected file: ${fileInput.files[0].name}`;
+                dropZone.style.borderColor = 'var(--primary)';
+            }
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                dropText.textContent = `Selected file: ${fileInput.files[0].name}`;
+                dropZone.style.borderColor = 'var(--primary)';
+            }
+        });
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError('Please select a CSV file to upload.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            errorAlert.style.display = 'none';
+            progressContainer.style.display = 'block';
+            btnUpload.disabled = true;
+            btnUpload.style.opacity = '0.7';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (progress < 90) {
+                    progress += 15;
+                    progressBarFill.style.width = progress + '%';
+                }
+            }, 100);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                clearInterval(interval);
+                progressBarFill.style.width = '100%';
+
+                const result = await response.json();
+
+                if (response.ok && result.status === 'success') {
+                    progressText.textContent = 'Data validated & SQLite populated! Redirecting...';
+                    setTimeout(() => {
+                        window.location.href = result.redirect;
+                    }, 600);
+                } else {
+                    progressContainer.style.display = 'none';
+                    btnUpload.disabled = false;
+                    btnUpload.style.opacity = '1';
+                    showError(result.message || (result.errors ? result.errors.join('<br>') : 'Upload failed.'));
+                }
+            } catch (err) {
+                clearInterval(interval);
+                progressContainer.style.display = 'none';
+                btnUpload.disabled = false;
+                btnUpload.style.opacity = '1';
+                showError('Server connection error. Please try again.');
+            }
+        });
+
+        function showError(msg) {
+            errorAlert.innerHTML = msg;
+            errorAlert.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

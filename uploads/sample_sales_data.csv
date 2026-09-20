@@ -1,0 +1,26 @@
+Order_ID,Order_Date,Customer_ID,Product,Category,Region,Quantity,Sales,Profit
+ORD-2024-1001,2024-01-05,CUST-801,MacBook Pro 16",Electronics,North,2,240000,42000
+ORD-2024-1002,2024-01-08,CUST-802,Ergonomic Office Chair,Furniture,South,5,45000,9000
+ORD-2024-1003,2024-01-12,CUST-803,Dell UltraSharp 27" Monitor,Electronics,West,4,112000,18000
+ORD-2024-1004,2024-01-15,CUST-804,Standing Executive Desk,Furniture,East,2,68000,12000
+ORD-2024-1005,2024-01-18,CUST-805,Logitech MX Master 3S,Accessories,North,10,35000,8500
+ORD-2024-1006,2024-01-22,CUST-806,iPhone 15 Pro,Electronics,Central,3,390000,55000
+ORD-2024-1007,2024-01-25,CUST-807,Mechanical RGB Keyboard,Accessories,South,8,48000,11000
+ORD-2024-1008,2024-02-01,CUST-808,HP LaserJet Pro Printer,Office Supplies,West,3,75000,-4500
+ORD-2024-1009,2024-02-04,CUST-809,Sony WH-1000XM5 Headphones,Electronics,East,6,150000,28000
+ORD-2024-1010,2024-02-10,CUST-810,Filing Cabinet Heavy Duty,Office Supplies,Central,4,32000,4800
+ORD-2024-1011,2024-02-14,CUST-811,Samsung Galaxy S24 Ultra,Electronics,North,2,260000,38000
+ORD-2024-1012,2024-02-18,CUST-812,Leather Manager Chair,Furniture,South,3,42000,-2000
+ORD-2024-1013,2024-02-22,CUST-813,Anker 10-in-1 USB-C Dock,Accessories,West,12,36000,9200
+ORD-2024-1014,2024-02-26,CUST-814,Heavy Duty Paper Shredder,Office Supplies,East,5,27500,3200
+ORD-2024-1015,2024-03-02,CUST-815,iPad Air M2,Electronics,Central,4,220000,34000
+ORD-2024-1016,2024-03-05,CUST-816,Conference Table Oval,Furniture,North,1,85000,16500
+ORD-2024-1017,2024-03-10,CUST-817,Wireless Presenter Pointer,Accessories,South,15,22500,5500
+ORD-2024-1018,2024-03-14,CUST-818,Epson EcoTank Color Printer,Office Supplies,West,2,44000,6200
+ORD-2024-1019,2024-03-18,CUST-819,Asus ROG Gaming Laptop,Electronics,East,2,290000,41000
+ORD-2024-1020,2024-03-22,CUST-820,Ergonomic Footrest,Furniture,Central,10,18000,3600
+ORD-2024-1021,2024-03-25,CUST-821,MacBook Pro 16",Electronics,South,1,120000,21000
+ORD-2024-1022,2024-03-28,CUST-822,Standing Executive Desk,Furniture,North,3,102000,18000
+ORD-2024-1023,2024-04-02,CUST-823,Logitech MX Master 3S,Accessories,East,8,28000,6800
+ORD-2024-1024,2024-04-05,CUST-824,HP LaserJet Pro Printer,Office Supplies,North,4,100000,-6000
+ORD-2024-1025,2024-04-10,CUST-825,Dell UltraSharp 27" Monitor,Electronics,Central,3,84000,13500

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Analytics Dashboard - Interactive Intelligence</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header class="navbar">
+        <a href="/" class="brand">
+            <div class="brand-logo">BA</div>
+            <div>
+                <div class="brand-title">Business Analytics Web App</div>
+            </div>
+            <span class="brand-tag">Executive BI Dashboard</span>
+        </a>
+
+        <ul class="nav-menu">
+            <li><a href="/" class="nav-link">Upload New CSV</a></li>
+            <li><a href="/sample_csv" class="nav-link">Download Sample CSV</a></li>
+            <li>
+                <a href="/download_report" id="btnDownloadReport" target="_blank" class="nav-btn">
+                    📄 Download Analytical Report
+                </a>
+            </li>
+        </ul>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <div class="container">
+        
+        <!-- Filter & Info Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;">Active Dataset</div>
+                    <div class="toolbar-title">{{ filename }} ({{ val_report.valid_rows if val_report else 0 }} Valid Records)</div>
+                </div>
+            </div>
+
+            <!-- Dynamic Region Filter -->
+            <div class="filter-group">
+                <label for="regionSelect" class="filter-label">Filter Region:</label>
+                <select id="regionSelect" class="select-input">
+                    <option value="All Regions" selected>All Regions (Global View)</option>
+                    {% for reg in regions %}
+                    <option value="{{ reg }}">{{ reg }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Dashboard Workspace Tabs -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" data-tab="tab-dashboard">📊 Dashboard Overview</button>
+            <button class="tab-btn" data-tab="tab-insights">💡 Business Insights</button>
+            <button class="tab-btn" data-tab="tab-sql">🗄️ SQL Analysis (SQLite Engine)</button>
+            <button class="tab-btn" data-tab="tab-pandas">🐍 Python/Pandas Analytics</button>
+            <button class="tab-btn" data-tab="tab-data">🔍 Interactive Raw Data Viewer</button>
+        </div>
+
+        <!-- TAB 1: EXECUTIVE DASHBOARD OVERVIEW -->
+        <div id="tab-dashboard" class="tab-content active">
+            
+            <!-- KPI Cards Grid -->
+            <div class="kpi-grid">
+                <div class="kpi-card green">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Total Revenue</span>
+                        <div class="kpi-icon">💰</div>
+                    </div>
+                    <div class="kpi-value" id="kpiSales">₹0.00</div>
+                    <div class="kpi-subtext">Gross Sales Revenue</div>
+                </div>
+
+                <div class="kpi-card green">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Total Net Profit</span>
+                        <div class="kpi-icon">📈</div>
+                    </div>
+                    <div class="kpi-value" id="kpiProfit">₹0.00</div>
+                    <div class="kpi-subtext">Net Earnings</div>
+                </div>
+
+                <div class="kpi-card cyan">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Profit Margin</span>
+                        <div class="kpi-icon">🎯</div>
+                    </div>
+                    <div class="kpi-value" id="kpiMargin">0.00%</div>
+                    <div class="kpi-subtext">Profit / Sales Ratio</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Total Orders</span>
+                        <div class="kpi-icon">📦</div>
+                    </div>
+                    <div class="kpi-value" id="kpiOrders">0</div>
+                    <div class="kpi-subtext">Unique Order Transactions</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Unique Customers</span>
+                        <div class="kpi-icon">👥</div>
+                    </div>
+                    <div class="kpi-value" id="kpiCustomers">0</div>
+                    <div class="kpi-subtext">Active Customer Base</div>
+                </div>
+
+                <div class="kpi-card amber">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Avg Order Value (AOV)</span>
+                        <div class="kpi-icon">💳</div>
+                    </div>
+                    <div class="kpi-value" id="kpiAOV">₹0.00</div>
+                    <div class="kpi-subtext">Revenue per Order</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Units Sold</span>
+                        <div class="kpi-icon">🛒</div>
+                    </div>
+                    <div class="kpi-value" id="kpiQuantity">0</div>
+                    <div class="kpi-subtext">Total Quantity Volume</div>
+                </div>
+            </div>
+
+            <!-- Charts Section Grid -->
+            <div class="chart-grid">
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Regional Sales & Profit Comparison</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chartRegionSales"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Category Revenue Distribution</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chartCategorySales"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Top 10 Products by Sales Revenue</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chartTopProducts"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Sales & Profit Monthly Trend</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chartTrend"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TAB 2: AUTOMATED BUSINESS INSIGHTS -->
+        <div id="tab-insights" class="tab-content">
+            <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 20px; font-weight: 700;">Intelligent Business Insights Engine</h2>
+                <p style="color: var(--text-secondary); font-size: 14px;">Automatically evaluated rule-based business recommendations generated from your sales dataset.</p>
+            </div>
+            
+            <div class="insights-grid" id="insightsContainer">
+                <!-- Dynamically populated by JS -->
+            </div>
+        </div>
+
+        <!-- TAB 3: DEDICATED SQL ANALYSIS -->
+        <div id="tab-sql" class="tab-content">
+            <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 20px; font-weight: 700;">SQLite Database SQL Query Inspector</h2>
+                <p style="color: var(--text-secondary); font-size: 14px;">Below are the actual relational database SQL queries executed directly against the <code>sales_data</code> SQLite table.</p>
+            </div>
+
+            <div id="sqlQueriesContainer">
+                <!-- Dynamically populated by JS -->
+            </div>
+        </div>
+
+        <!-- TAB 4: PYTHON / PANDAS ANALYTICS -->
+        <div id="tab-pandas" class="tab-content">
+            <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 20px; font-weight: 700;">Python & Pandas Analytical Aggregations</h2>
+                <p style="color: var(--text-secondary); font-size: 14px;">DataFrame grouped metrics computed in Python to complement SQL query results.</p>
+            </div>
+
+            <div id="pandasAnalysisContainer">
+                <!-- Dynamically populated by JS -->
+            </div>
+        </div>
+
+        <!-- TAB 5: INTERACTIVE RAW DATA VIEWER -->
+        <div id="tab-data" class="tab-content">
+            <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 20px; font-weight: 700;">Interactive Records Deep-Dive</h2>
+                <p style="color: var(--text-secondary); font-size: 14px;">Showing validated records processed and stored in database.</p>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead id="rawTableHead"></thead>
+                    <tbody id="rawTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Business Analytics Web Application &copy; 2024 | Built for Business Analyst Portfolio & Executive Intelligence
+    </footer>
+
+    <!-- Dashboard Script -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
