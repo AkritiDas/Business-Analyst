@@ -41,7 +41,7 @@ function initRegionFilter() {
         regionSelect.addEventListener('change', (e) => {
             const selectedRegion = e.target.value;
             loadAnalyticsData(selectedRegion);
-            
+
             // Update download report button URL
             const downloadBtn = document.getElementById('btnDownloadReport');
             if (downloadBtn) {
@@ -80,12 +80,12 @@ async function loadAnalyticsData(region = 'All Regions') {
  */
 function updateKPICards(kpis) {
     if (!kpis) return;
-    
-    document.getElementById('kpiSales').textContent = `₹${kpis.total_sales.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
-    document.getElementById('kpiProfit').textContent = `₹${kpis.total_profit.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+
+    document.getElementById('kpiSales').textContent = `₹${kpis.total_sales.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+    document.getElementById('kpiProfit').textContent = `₹${kpis.total_profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     document.getElementById('kpiOrders').textContent = kpis.total_orders.toLocaleString();
     document.getElementById('kpiCustomers').textContent = kpis.total_customers.toLocaleString();
-    document.getElementById('kpiAOV').textContent = `₹${kpis.avg_order_value.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+    document.getElementById('kpiAOV').textContent = `₹${kpis.avg_order_value.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     document.getElementById('kpiMargin').textContent = `${kpis.profit_margin}%`;
     document.getElementById('kpiQuantity').textContent = kpis.total_quantity.toLocaleString();
 }
@@ -334,8 +334,8 @@ function renderPythonAnalytics(pandasAnalysis) {
                                 <td><strong>${r.region}</strong></td>
                                 <td>${r.total_orders}</td>
                                 <td>${r.total_quantity}</td>
-                                <td>₹${r.total_sales.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-                                <td>₹${r.total_profit.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                                <td>₹${r.total_sales.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                                <td>₹${r.total_profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                                 <td><span class="badge ${r.profit_margin >= 10 ? 'positive' : 'neutral'}">${r.profit_margin}%</span></td>
                             </tr>
                         `).join('')}
@@ -361,8 +361,8 @@ function renderPythonAnalytics(pandasAnalysis) {
                                 <td><strong>${c.category}</strong></td>
                                 <td>${c.total_orders}</td>
                                 <td>${c.total_quantity}</td>
-                                <td>₹${c.total_sales.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-                                <td>₹${c.total_profit.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                                <td>₹${c.total_sales.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                                <td>₹${c.total_profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                                 <td><span class="badge ${c.profit_margin >= 10 ? 'positive' : 'neutral'}">${c.profit_margin}%</span></td>
                             </tr>
                         `).join('')}
@@ -427,7 +427,7 @@ function escapeHtml(str) {
 
 function formatValue(val) {
     if (typeof val === 'number') {
-        return val % 1 === 0 ? val.toLocaleString() : val.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        return val % 1 === 0 ? val.toLocaleString() : val.toLocaleString('en-IN', { minimumFractionDigits: 2 });
     }
     return escapeHtml(val);
 }
